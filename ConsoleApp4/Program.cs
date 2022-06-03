@@ -52,13 +52,12 @@ namespace ConsoleApp4
                 int a, b;
                 char c;
                 string inputArr = "";
+                bool v = false;
 
                 string[] arr = new string[3]; // ToDo не работает
 
-                int i = 0;
                 do
                 {
-                    //Console.WriteLine("Введите значение: ");
                     try
                     {
                         arr = Console.ReadLine().Split();
@@ -67,105 +66,129 @@ namespace ConsoleApp4
                     {
                         Console.WriteLine("Индекс элемента массива или коллекции находится вне диапазона допустимых значений");
                     }
+                    try
+                    {
+                        if (arr.Length != 3)
+                            throw new ArgumentException("Выражение некорректное, попробуйте написать в формате \r\n a + b \r\n a * b \r\n a - b \r\n a / b");
+                    }
+                    catch(ArgumentException ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
 
                     inputArr = string.Join(" ", arr);
 
                     if (inputArr == "stop")
                         break;
 
-                    a = int.Parse(arr[0]);
-                    c = char.Parse(arr[1]);
-                    // кейс 1
                     try
                     {
-                        if (c == ' ') // ToDo пока не работает
-                        {
-                            throw new ArgumentException("Укажите в выражении оператор: +, -, *, /");
-                        }
+                        a = int.Parse(arr[0]);
                     }
-                    catch (ArgumentException e)
+                    catch
                     {
                         Console.BackgroundColor = ConsoleColor.Red;
-                        Console.WriteLine(e.ToString());
+                        Console.WriteLine($"Операнд {arr[0]} не является числом");
                         Console.ResetColor();
+                        a = 0;
+                        v = true;
                     }
-                    // кейс 2
+
                     try
                     {
+                        c = char.Parse(arr[1]);
                         if (c != '+' && c != '-' && c != '*' && c != '/')
                         {
-                            throw new ArgumentException($"Я пока не умею работать с оператором{ c}");
+                            throw new ArgumentException($"Я пока не умею работать с оператором {c}");
                         }
+                        //if (c == '\0')
+                        //{
+                        //    throw new ArgumentException($"Укажите в выражении оператор: +, -, *, /");
+                        //}
                     }
                     catch (ArgumentException e)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.WriteLine(e.ToString());
                         Console.ResetColor();
+                        c = '0';
+                        v = true;
                     }
-                    b = int.Parse(arr[2]);
-
-                    switch (c)
+                    try
                     {
-                        case '+':
-                            try
-                            {
-                                Sum(a, b); // сложение
-                            }
-                            catch
-                            {
-                                Console.BackgroundColor = ConsoleColor.Green;
-                                Console.WriteLine("вы получили ответ 13!");
-                                Console.ResetColor();
-                            }
-                            break;
-                        case '-':
-                            try
-                            {
-                                Sub(a, b); // вычитание
-                            }
-                            catch
-                            {
-                                Console.BackgroundColor = ConsoleColor.Green;
-                                Console.WriteLine("вы получили ответ 13!");
-                                Console.ResetColor();
-                            }
-                            break;
-                        case '*':
-                            try
-                            {
-                                Mul(a, b); // умножение
-                            }
-                            catch
-                            {
-                                Console.BackgroundColor = ConsoleColor.Green;
-                                Console.WriteLine("вы получили ответ 13!");
-                                Console.ResetColor();
-                            }
-                            break;
-                        case '/':
-                            try
-                            {
-                                Div(a, b); // деление   
-                            }
-                            catch (DivideByZeroException)
-                            {
-                                Console.BackgroundColor = ConsoleColor.Magenta;
-                                Console.WriteLine("Деление на ноль");
-                                Console.ResetColor();
-                            }
-                            catch (Exception)
-                            {
-                                Console.BackgroundColor = ConsoleColor.Green;
-                                Console.WriteLine("вы получили ответ 13!");
-                                Console.ResetColor();
-                            }
-
-                            break;
-
-                        default: throw new ArgumentException();
+                        b = int.Parse(arr[2]);
                     }
-                    i++;
+                    catch
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Операнд {arr[2]} не является числом");
+                        Console.ResetColor();
+                        b = 0;
+                        v = true;    
+                    }
+                    if(!v)
+                    {
+                        switch (c)
+                        {
+                            case '+':
+                                try
+                                {
+                                    Sum(a, b); // сложение
+                                }
+                                catch
+                                {
+                                    Console.BackgroundColor = ConsoleColor.Green;
+                                    Console.WriteLine("вы получили ответ 13!");
+                                    Console.ResetColor();
+                                }
+                                break;
+                            case '-':
+                                try
+                                {
+                                    Sub(a, b); // вычитание
+                                }
+                                catch
+                                {
+                                    Console.BackgroundColor = ConsoleColor.Green;
+                                    Console.WriteLine("вы получили ответ 13!");
+                                    Console.ResetColor();
+                                }
+                                break;
+                            case '*':
+                                try
+                                {
+                                    Mul(a, b); // умножение
+                                }
+                                catch
+                                {
+                                    Console.BackgroundColor = ConsoleColor.Green;
+                                    Console.WriteLine("вы получили ответ 13!");
+                                    Console.ResetColor();
+                                }
+                                break;
+                            case '/':
+                                try
+                                {
+                                    Div(a, b); // деление   
+                                }
+                                catch (DivideByZeroException)
+                                {
+                                    Console.BackgroundColor = ConsoleColor.Magenta;
+                                    Console.WriteLine("Деление на ноль");
+                                    Console.ResetColor();
+                                }
+                                catch (Exception)
+                                {
+                                    Console.BackgroundColor = ConsoleColor.Green;
+                                    Console.WriteLine("вы получили ответ 13!");
+                                    Console.ResetColor();
+                                }
+
+                                break;
+
+                            default: throw new ArgumentException();
+                        }
+                    }
                 }
                 while (true);
             }
