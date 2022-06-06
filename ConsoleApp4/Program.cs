@@ -5,17 +5,23 @@ namespace ConsoleApp4
     {
         static void Main(string[] args)
         {
-            Calculate();
-            Console.ReadKey();
+            try
+            {
+                Calculate();
+                Console.ReadKey();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"В калькуляторе произошла ошибка: {ex}");
+            }
         }
-
         static void Sum(int a, int b)
         {
             var sum = a + b;
             Console.WriteLine($"Ответ: {sum}");
             // кейс 6
             if (sum == 13)
-                throw new Exception();
+                throw new ArgumentException();
         }
         static void Sub(int a, int b)
         {
@@ -23,7 +29,7 @@ namespace ConsoleApp4
             Console.WriteLine($"Ответ: {sub}");
             // кейс 6
             if (sub == 13)
-                throw new Exception();
+                throw new ArgumentException();
         }
         static void Mul(int a, int b)
         {
@@ -31,7 +37,7 @@ namespace ConsoleApp4
             Console.WriteLine($"Ответ: {mul}");
             // кейс 6
             if (mul == 13)
-                throw new Exception();
+                throw new ArgumentException();
         }
         static void Div(int a, int b)
         {
@@ -42,7 +48,7 @@ namespace ConsoleApp4
             Console.WriteLine($"Ответ: {div}");
             // кейс 6
             if (div == 13)
-                throw new Exception();
+                throw new ArgumentException();
         }
 
         static void Calculate()
@@ -50,7 +56,7 @@ namespace ConsoleApp4
             try
             {
                 int a, b;
-                char c;
+                string c;
                 string inputArr = "";
                 bool v = false;
 
@@ -61,6 +67,10 @@ namespace ConsoleApp4
                     try
                     {
                         arr = Console.ReadLine().Split();
+                        inputArr = string.Join(" ", arr);
+
+                        if (inputArr == "stop")
+                            break;
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -75,12 +85,6 @@ namespace ConsoleApp4
                     {
                         Console.WriteLine(ex.ToString());
                     }
-
-                    inputArr = string.Join(" ", arr);
-
-                    if (inputArr == "stop")
-                        break;
-
                     try
                     {
                         a = int.Parse(arr[0]);
@@ -93,25 +97,25 @@ namespace ConsoleApp4
                         a = 0;
                         v = true;
                     }
-
                     try
                     {
-                        c = char.Parse(arr[1]);
-                        if (c != '+' && c != '-' && c != '*' && c != '/')
+                        c = arr[1];
+                        if (c != "+" && c != "-" && c != "*" && c != "/" && c != null)
                         {
                             throw new ArgumentException($"Я пока не умею работать с оператором {c}");
                         }
-                        //if (c == '\0')
+                        //if (c.Length > 1)
                         //{
                         //    throw new ArgumentException($"Укажите в выражении оператор: +, -, *, /");
                         //}
+
                     }
-                    catch (ArgumentException e)
+                    catch (ArgumentException ex)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
-                        Console.WriteLine(e.ToString());
+                        Console.WriteLine(ex.ToString());
                         Console.ResetColor();
-                        c = '0';
+                        c = null;
                         v = true;
                     }
                     try
@@ -130,43 +134,43 @@ namespace ConsoleApp4
                     {
                         switch (c)
                         {
-                            case '+':
+                            case "+":
                                 try
                                 {
                                     Sum(a, b); // сложение
                                 }
-                                catch
+                                catch(ArgumentException)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
                                     Console.ResetColor();
                                 }
                                 break;
-                            case '-':
+                            case "-":
                                 try
                                 {
                                     Sub(a, b); // вычитание
                                 }
-                                catch
+                                catch(ArgumentException)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
                                     Console.ResetColor();
                                 }
                                 break;
-                            case '*':
+                            case "*":
                                 try
                                 {
                                     Mul(a, b); // умножение
                                 }
-                                catch
+                                catch(ArgumentException)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
                                     Console.ResetColor();
                                 }
                                 break;
-                            case '/':
+                            case "/":
                                 try
                                 {
                                     Div(a, b); // деление   
@@ -177,7 +181,7 @@ namespace ConsoleApp4
                                     Console.WriteLine("Деление на ноль");
                                     Console.ResetColor();
                                 }
-                                catch (Exception)
+                                catch (ArgumentException)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
@@ -186,16 +190,17 @@ namespace ConsoleApp4
 
                                 break;
 
-                            default: throw new ArgumentException();
+                            //default: throw new ArgumentException();
                         }
                     }
                 }
                 while (true);
             }
             // кейс 7 
-            catch(Exception) // ToDo некорректно срабатывает
+            catch(Exception ex) // ToDo некорректно срабатывает
             {
                 Console.WriteLine("Я не смог обработать ошибку");
+                throw new Exception(ex.ToString());              
             }
         }
     }
