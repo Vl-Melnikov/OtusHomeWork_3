@@ -12,14 +12,13 @@ namespace ConsoleApp4
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"В калькуляторе произошла ошибка: {ex}");
+                Console.WriteLine($"В калькуляторе произошла ошибка: {ex.Message}");
             }
         }
         static void Sum(int a, int b)
         {
             var sum = a + b;
             Console.WriteLine($"Ответ: {sum}");
-            // кейс 6
             if (sum == 13)
                 throw new ArgumentException();
         }
@@ -27,7 +26,6 @@ namespace ConsoleApp4
         {
             var sub = a - b;
             Console.WriteLine($"Ответ: {sub}");
-            // кейс 6
             if (sub == 13)
                 throw new ArgumentException();
         }
@@ -35,18 +33,15 @@ namespace ConsoleApp4
         {
             var mul = a * b;
             Console.WriteLine($"Ответ: {mul}");
-            // кейс 6
             if (mul == 13)
                 throw new ArgumentException();
         }
         static void Div(int a, int b)
         {
-            // Кейс 5
             if (b == 0)
                 throw new DivideByZeroException();
             var div = a / b;
             Console.WriteLine($"Ответ: {div}");
-            // кейс 6
             if (div == 13)
                 throw new ArgumentException();
         }
@@ -59,8 +54,7 @@ namespace ConsoleApp4
                 string c;
                 string inputArr = "";
                 bool v = false;
-
-                string[] arr = new string[3]; // ToDo не работает
+                string[] arr = new string[3];
 
                 do
                 {
@@ -76,20 +70,12 @@ namespace ConsoleApp4
                     {
                         Console.WriteLine("Индекс элемента массива или коллекции находится вне диапазона допустимых значений");
                     }
-                    try
-                    {
-                        if (arr.Length != 3)
-                            throw new ArgumentException("Выражение некорректное, попробуйте написать в формате \r\n a + b \r\n a * b \r\n a - b \r\n a / b");
-                    }
-                    catch(ArgumentException ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+
                     try
                     {
                         a = int.Parse(arr[0]);
                     }
-                    catch
+                    catch(FormatException)
                     {
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.WriteLine($"Операнд {arr[0]} не является числом");
@@ -97,47 +83,86 @@ namespace ConsoleApp4
                         a = 0;
                         v = true;
                     }
+                    catch (IndexOutOfRangeException ex)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                        a = 0;
+                        v = true;
+                    }
+
                     try
                     {
                         c = arr[1];
-                        if (c != "+" && c != "-" && c != "*" && c != "/" && c != null)
+                        if (c != "+" && c != "-" && c != "*" && c != "/")
                         {
-                            throw new ArgumentException($"Я пока не умею работать с оператором {c}");
+                            throw new ArgumentException(arr[1]);
+                            
                         }
-                        //if (c.Length > 1)
-                        //{
-                        //    throw new ArgumentException($"Укажите в выражении оператор: +, -, *, /");
-                        //}
-
+                        if (c == " ")
+                        {
+                            throw new IndexOutOfRangeException();
+                        }
                     }
-                    catch (ArgumentException ex)
+                    catch (ArgumentException)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
-                        Console.WriteLine(ex.ToString());
+                        Console.WriteLine($"Я пока не умею работать с оператором {arr[1]}");
                         Console.ResetColor();
                         c = null;
                         v = true;
                     }
+                    catch (IndexOutOfRangeException)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Укажите в выражении оператор: +, -, *, /");
+                        Console.ResetColor();
+                        c = null;
+                        v = true;
+                    }
+
                     try
                     {
                         b = int.Parse(arr[2]);
                     }
-                    catch
+                    catch (FormatException)
                     {
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.WriteLine($"Операнд {arr[2]} не является числом");
                         Console.ResetColor();
                         b = 0;
-                        v = true;    
+                        v = true;
                     }
-                    if(!v)
+                    catch (IndexOutOfRangeException ex)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                        b = 0;
+                        v = true;
+                    }
+
+                    try
+                    {
+                        if (arr.Length != 3)
+                            throw new FormatException();
+                    }
+                    catch (FormatException)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Выражение некорректное, попробуйте написать в формате \r\n a + b \r\n a * b \r\n a - b \r\n a / b");
+                        Console.ResetColor();
+                    }
+
+                    if (!v)
                     {
                         switch (c)
                         {
                             case "+":
                                 try
                                 {
-                                    Sum(a, b); // сложение
+                                    Sum(a, b);
                                 }
                                 catch(ArgumentException)
                                 {
@@ -149,7 +174,7 @@ namespace ConsoleApp4
                             case "-":
                                 try
                                 {
-                                    Sub(a, b); // вычитание
+                                    Sub(a, b);
                                 }
                                 catch(ArgumentException)
                                 {
@@ -161,7 +186,7 @@ namespace ConsoleApp4
                             case "*":
                                 try
                                 {
-                                    Mul(a, b); // умножение
+                                    Mul(a, b);
                                 }
                                 catch(ArgumentException)
                                 {
@@ -173,7 +198,7 @@ namespace ConsoleApp4
                             case "/":
                                 try
                                 {
-                                    Div(a, b); // деление   
+                                    Div(a, b);  
                                 }
                                 catch (DivideByZeroException)
                                 {
@@ -187,20 +212,23 @@ namespace ConsoleApp4
                                     Console.WriteLine("вы получили ответ 13!");
                                     Console.ResetColor();
                                 }
-
                                 break;
-
-                            //default: throw new ArgumentException();
+                            default: throw new ArgumentException();
                         }
                     }
                 }
                 while (true);
             }
-            // кейс 7 
-            catch(Exception ex) // ToDo некорректно срабатывает
+            catch(OverflowException)
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Результат выражения вышел за границы int");
+                Console.ResetColor();
+            }
+            catch(Exception ex)
             {
                 Console.WriteLine("Я не смог обработать ошибку");
-                throw new Exception(ex.ToString());              
+                    throw new Exception(ex.ToString());              
             }
         }
     }
