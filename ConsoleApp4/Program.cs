@@ -30,8 +30,15 @@ namespace ConsoleApp4
 
         }
     }
-
-
+    class MyFormatException : FormatException
+    {
+        public string ProblemData { get; private set; }
+        public MyFormatException(string? message, Exception innerException, string? problemData) : base(message, innerException)
+        {
+            ProblemData = problemData;
+        }
+    }
+    
     internal class Program
     {
         static void Main(string[] args)
@@ -44,6 +51,19 @@ namespace ConsoleApp4
             catch (Exception ex)
             {
                 Console.WriteLine($"В калькуляторе произошла ошибка: {ex.Message}");
+            }
+        }
+        public static int MyTryParse(string input)
+        {
+            try
+            {
+                return int.Parse(input);
+            }
+            catch (FormatException ex)
+            {
+                var exp = new MyFormatException("", ex, input);
+                exp.Data.Add("input", input);
+                throw exp;
             }
         }
         static void Sum(int a, int b)
@@ -70,7 +90,6 @@ namespace ConsoleApp4
         static void Div(int a, int b)
         {             
             var div = a / b;
-                throw new DivideByZeroException();
             Console.WriteLine($"Ответ: {div}");
             if (div == 13)
                 throw new CheckResultExeption();
@@ -97,26 +116,24 @@ namespace ConsoleApp4
                         if (text == "stop")
                             break;
 
-                        arr = text.Split().Length <= 3 ? text.Split() : throw new CheckLengthExeption();
+                        arr = text.Split();
+                        if(arr.Length < 3)
+                            throw new CheckNullOperatorExeption();
+                        if(arr.Length > 3)
+                            throw new CheckLengthExeption();
 
-                        a = int.Parse(arr[0]);
+                        a = MyTryParse(arr[0]);
                         c = arr[1];
                         if (c != "+" && c != "-" && c != "*" && c != "/")
                         {
                             throw new CheckOperatorExeption();
                         }
-                        if (arr[1] == null)
-                        {
-                            throw new CheckNullOperatorExeption();
-                        }
-
-                        b = int.Parse(arr[2]);
-                   
+                        b = MyTryParse(arr[2]);
                     }
-                    catch(FormatException)
+                    catch (MyFormatException ex)
                     {
                         Console.BackgroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Операнд {arr[0]} или {arr[2]} не является числом"); // ToDo как передать опереатора?
+                        Console.WriteLine($"Операнд {ex.ProblemData} не является числом");
                         Console.ResetColor();
                         canCalculate = false;
                     }
@@ -127,14 +144,14 @@ namespace ConsoleApp4
                         Console.ResetColor();
                         canCalculate = false;
                     }
-                    catch (CheckOperatorExeption ex)
+                    catch (CheckOperatorExeption)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Я пока не умею работать с оператором {arr[1]}");
                         Console.ResetColor();
                         canCalculate = false;
                     }
-                    catch (CheckNullOperatorExeption) // ToDo не работает
+                    catch (CheckNullOperatorExeption)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Укажите в выражении оператор: +, -, *, /");
