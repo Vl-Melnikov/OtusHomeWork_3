@@ -1,31 +1,31 @@
 ﻿
 namespace ConsoleApp4
 {
-    class CheckResultExeption : ArgumentException
+    class ResultExeption : ArgumentException
     {    
-        public CheckResultExeption()
+        public ResultExeption()
         {
 
         }
     }
 
-    class CheckOperatorExeption : ArgumentException 
+    class CperatorExeption : ArgumentException 
     {
-        public CheckOperatorExeption() 
+        public CperatorExeption() 
         {
 
         }
     }
-    class CheckLengthExeption : ArgumentException
+    class LengthExeption : ArgumentException
     {
-        public CheckLengthExeption()
+        public LengthExeption()
         {
 
         }
     }
-    class CheckNullOperatorExeption : ArgumentException
+    class NullOperatorExeption : ArgumentException
     {
-        public CheckNullOperatorExeption()
+        public NullOperatorExeption()
         {
 
         }
@@ -68,31 +68,31 @@ namespace ConsoleApp4
         }
         static void Sum(int a, int b)
         {
-            var sum = a + b;
+            var sum = checked(a + b); // проверим на переполнение
             Console.WriteLine($"Ответ: {sum}");
             if (sum == 13)
-                throw new CheckResultExeption();
+                throw new ResultExeption();
         }
         static void Sub(int a, int b)
         {
             var sub = a - b;
             Console.WriteLine($"Ответ: {sub}");
             if (sub == 13)
-                throw new CheckResultExeption();
+                throw new ResultExeption();
         }
         static void Mul(int a, int b)
         {
             var mul = a * b;
             Console.WriteLine($"Ответ: {mul}");
             if (mul == 13)
-                throw new CheckResultExeption();
+                throw new ResultExeption();
         }
         static void Div(int a, int b)
         {             
             var div = a / b;
             Console.WriteLine($"Ответ: {div}");
             if (div == 13)
-                throw new CheckResultExeption();
+                throw new ResultExeption();
         }
 
         static void Calculate()
@@ -118,15 +118,15 @@ namespace ConsoleApp4
 
                         arr = text.Split();
                         if(arr.Length < 3)
-                            throw new CheckNullOperatorExeption();
+                            throw new NullOperatorExeption();
                         if(arr.Length > 3)
-                            throw new CheckLengthExeption();
+                            throw new LengthExeption();
 
                         a = MyTryParse(arr[0]);
                         c = arr[1];
                         if (c != "+" && c != "-" && c != "*" && c != "/")
                         {
-                            throw new CheckOperatorExeption();
+                            throw new CperatorExeption();
                         }
                         b = MyTryParse(arr[2]);
                     }
@@ -144,21 +144,21 @@ namespace ConsoleApp4
                         Console.ResetColor();
                         canCalculate = false;
                     }
-                    catch (CheckOperatorExeption)
+                    catch (CperatorExeption)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Я пока не умею работать с оператором {arr[1]}");
                         Console.ResetColor();
                         canCalculate = false;
                     }
-                    catch (CheckNullOperatorExeption)
+                    catch (NullOperatorExeption)
                     {
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Укажите в выражении оператор: +, -, *, /");
                         Console.ResetColor();
                         canCalculate = false;
                     }
-                    catch (CheckLengthExeption)
+                    catch (LengthExeption)
                     {
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.WriteLine("Выражение некорректное, попробуйте написать в формате \r\n a + b \r\n a * b \r\n a - b \r\n a / b");
@@ -175,7 +175,7 @@ namespace ConsoleApp4
                                 {
                                     Sum(a, b);
                                 }
-                                catch(CheckResultExeption)
+                                catch(ResultExeption)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
@@ -187,7 +187,7 @@ namespace ConsoleApp4
                                 {
                                     Sub(a, b);
                                 }
-                                catch(CheckResultExeption)
+                                catch(ResultExeption)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
@@ -199,7 +199,7 @@ namespace ConsoleApp4
                                 {
                                     Mul(a, b);
                                 }
-                                catch(CheckResultExeption)
+                                catch(ResultExeption)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
@@ -217,7 +217,7 @@ namespace ConsoleApp4
                                     Console.WriteLine("Деление на ноль");
                                     Console.ResetColor();
                                 }
-                                catch (CheckResultExeption)
+                                catch (ResultExeption)
                                 {
                                     Console.BackgroundColor = ConsoleColor.Green;
                                     Console.WriteLine("вы получили ответ 13!");
